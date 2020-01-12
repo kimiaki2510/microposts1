@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  before_action :require_user_logged_in, only: [:index, :show]
+  
   def index
     @users = User.order(id: :desc).page(params[:page]).per(25)
   end
@@ -33,15 +35,6 @@ class UsersController < ApplicationController
   end
   
   private
-  
-  def login(email, password)
-    @user = User.find_by(email: email)
-    if @user && @user.authenticate(password)
-      session[:user_id] = @user.id
-    else
-      return false
-    end
-  end
   
   def user_params
     params.require(:user).permit(:name, :email, :password, :password_confirmation)
